@@ -1,11 +1,11 @@
 #!/bin/bash
 
 echo "Rebuilding backend image..."
-cd ../backend
+cd ../backend/
 docker build -t backend:latest .
 
-echo "Loading image to minikube..."
-minikube image load backend:latest
+echo "Loading image to kind..."
+kind load docker-image backend:latest
 
 echo "Restarting backend deployment..."
 cd ../k8s
