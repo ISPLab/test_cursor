@@ -17,10 +17,20 @@ kubectl create namespace app-namespace --dry-run=client -o yaml | kubectl apply 
 
 # Применяем конфигурации
 echo "Applying configurations..."
+
+# Применяем общие конфигурации
 kubectl apply -f configmap.yaml -n app-namespace
 kubectl apply -f secret.yaml -n app-namespace
-kubectl apply -f backend.yaml -n app-namespace
-kubectl apply -f frontend.yaml -n app-namespace
+
+# Применяем конфигурации бэкенда
+kubectl apply -f backend-deployment.yaml -n app-namespace
+kubectl apply -f backend-service.yaml -n app-namespace
+
+# Применяем конфигурации фронтенда
+kubectl apply -f frontend-deployment.yaml -n app-namespace
+kubectl apply -f frontend-service.yaml -n app-namespace
+
+# Применяем ingress
 kubectl apply -f ingress.yaml -n app-namespace
 
 # Ждем, пока все поды будут готовы
