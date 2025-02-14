@@ -372,3 +372,127 @@ sudo install minikube-linux-amd64 /usr/local/bin/minikube
 
 💡  To pull new external images, you may need to configure a proxy: https://minikube.sigs.k8s.io/docs/reference/networking/proxy/
   Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+
+
+
+
+  ## Доступ к приложению в Minikube
+
+### Метод 1: Через minikube service
+
+1. Проверьте доступные сервисы:
+```bash
+kubectl get services
+```
+
+2. Откройте доступ к сервису:
+```bash
+# Замените frontend на имя вашего сервиса
+minikube service frontend --url
+```
+
+3. Или сразу откройте в браузере:
+```bash
+minikube service frontend
+```
+
+### Метод 2: Через Port Forwarding
+
+1. Проверьте поды:
+```bash
+kubectl get pods
+```
+
+2. Настройте проброс портов:
+```bash
+# Формат: kubectl port-forward service/имя-сервиса локальный-порт:порт-в-кластере
+kubectl port-forward service/frontend 4200:80
+```
+
+### Метод 3: Через Ingress
+
+1. Включите Ingress в Minikube:
+```bash
+minikube addons enable ingress
+```
+
+2. Проверьте статус Ingress:
+```bash
+kubectl get ingress
+```
+
+3. Добавьте запись в /etc/hosts:
+```bash
+# Получите IP Minikube
+minikube ip
+
+# Добавьте в /etc/hosts:
+# <minikube-ip> your-app.local
+```
+
+### Проверка доступности
+
+1. Проверьте статус подов:
+```bash
+kubectl get pods
+kubectl describe pod <имя-пода>
+```
+
+2. Проверьте логи:
+```bash
+kubectl logs <имя-пода>
+```
+
+3. Проверьте сервисы:
+```bash
+kubectl get services
+kubectl describe service frontend
+```
+
+### Полезные команды для диагностики
+
+```bash
+# Получить все ресурсы в namespace
+kubectl get all
+
+# Подробная информация о поде
+kubectl describe pod <имя-пода>
+
+# Интерактивный shell в поде
+kubectl exec -it <имя-пода> -- /bin/bash
+
+# Просмотр логов в реальном времени
+kubectl logs -f <имя-пода>
+
+# Проверка конфигурации Ingress
+kubectl get ingress
+kubectl describe ingress
+```
+
+### Устранение проблем
+
+1. Если сервис недоступен:
+   - Проверьте статус подов (`kubectl get pods`)
+   - Проверьте логи (`kubectl logs`)
+   - Убедитесь, что сервис правильно настроен (`kubectl describe service`)
+
+2. Если приложение не отвечает:
+   - Проверьте, что поды в статусе Running
+   - Проверьте endpoints сервиса
+   - Проверьте настройки портов в сервисе и deployment
+
+
+
+
+   Добавлены health check эндпоинты
+Улучшены проверки готовности и живучести
+Добавлены CORS настройки в Ingress
+Улучшен скрипт деплоя
+Добавлены ресурсные лимиты
+Улучшена обработка ошибок
+
+
+kubectl create secret docker-registry regcred \
+  --docker-server=<your-registry-server> \
+  --docker-username=<your-name> \
+  --docker-password=<your-password>

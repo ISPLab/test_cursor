@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, UnauthorizedException, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -15,5 +15,10 @@ export class AuthController {
       throw new UnauthorizedException();
     }
     return this.authService.login(user);
+  }
+
+  @Get('health')
+  health() {
+    return { status: 'ok' };
   }
 } 
