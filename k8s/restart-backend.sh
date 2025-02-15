@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Проверяем и создаем builder
+if ! docker buildx ls | grep -q "builder"; then
+    echo "Creating Docker builder..."
+    docker buildx create --name builder --use --bootstrap
+fi
+
 echo "Rebuilding backend image..."
 cd ../backend/
 docker build -t backend:latest .
