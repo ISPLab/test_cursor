@@ -496,3 +496,20 @@ kubectl create secret docker-registry regcred \
   --docker-server=<your-registry-server> \
   --docker-username=<your-name> \
   --docker-password=<your-password>
+
+
+
+
+Правильно настроены права для nginx в контейнере:
+Созданы все необходимые директории
+Установлены корректные права доступа
+Nginx работает от непривилегированного пользователя
+Корректно настроен Pod в Kubernetes:
+Добавлен securityContext с правильными UID/GID
+Настроены необходимые тома для работы nginx
+Используются emptyDir для временных файлов
+Все сервисы доступны:
+Frontend на http://localhost:8080
+Backend API на http://localhost:3000
+Настроен проброс портов
+Теперь приложение должно работать стабильно и безопасно. Если понадобятся какие-то изменения или возникнут вопросы - обращайтесь!
