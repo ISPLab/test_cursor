@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Создаем namespace если его нет
-kubectl create namespace app-namespace --dry-run=client -o yaml | kubectl apply -f -
+# Очищаем все ресурсы
+echo "Cleaning up resources..."
+kubectl delete all --all -n app-namespace
+sleep 5
 
 # Собираем и загружаем образы
 echo "Building and loading images..."
