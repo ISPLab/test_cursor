@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Проверяем наличие kind
+if ! command -v kind &> /dev/null; then
+    echo "Error: kind is not installed. Installing..."
+    brew install kind
+    
+    echo "Creating kind cluster..."
+    kind create cluster
+fi
+
 # Очищаем все ресурсы
 echo "Cleaning up resources..."
 kubectl delete all --all -n app-namespace

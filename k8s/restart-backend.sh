@@ -1,16 +1,15 @@
 #!/bin/bash
 
-# Проверяем и создаем builder
-if ! docker buildx ls | grep -q "builder"; then
-    echo "Creating Docker builder..."
-    docker buildx create --name builder --use --bootstrap
+# Проверяем наличие kind
+if ! command -v kind &> /dev/null; then
+    echo "Error: kind is not installed"
+    exit 1
 fi
 
 echo "Rebuilding backend image..."
-cd ../backend/
+cd ../backend
 docker build -t backend:latest .
-
-echo "Loading image to kind..."
+echo "Loading backend image to kind..."
 kind load docker-image backend:latest
 
 echo "Restarting backend deployment..."
@@ -22,3 +21,11 @@ kubectl wait --for=condition=ready pod -l app=backend -n app-namespace --timeout
 
 echo "Current pods status:"
 kubectl get pods -n app-namespace -l app=backend
+
+# Показываем URL для доступа
+echo -e "\nBackend API доступен по адресу:"
+echo "http://localhost:3000"
+
+# Пробрасываем порт для локального доступа
+echo "Пробрасываем порт 3000..."
+kubectl port-forward service/backend-service 3000:3000 -n app-namespace
