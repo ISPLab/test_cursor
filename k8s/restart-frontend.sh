@@ -23,10 +23,20 @@ cd ../k8s
 kubectl rollout restart deployment/frontend-deployment -n app-namespace
 
 echo "Waiting for pods to be ready..."
-kubectl wait --for=condition=ready pod -l app=frontend -n app-namespace --timeout=300s
+kubectl wait --for=condition=ready pod -l app=frontend -n app-namespace --timeout=300s || true
 
 # Получаем имя пода
 FRONTEND_POD=$(kubectl get pod -n app-namespace -l app=frontend -o jsonpath='{.items[0].metadata.name}')
+
+echo "Pod status and logs:"
+kubectl describe pod -n app-namespace $FRONTEND_POD
+echo "---"
+kubectl logs -n app-namespace $FRONTEND_POD --previous || true
+echo "---"
+kubectl logs -n app-namespace $FRONTEND_POD
+
+echo "Checking nginx configuration..."
+kubectl exec -n app-namespace $FRONTEND_POD -- nginx -t || true
 
 echo "Current pods status:"
 kubectl get pods -n app-namespace -l app=frontend

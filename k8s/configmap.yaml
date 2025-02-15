@@ -8,13 +8,14 @@ data:
     server {
       listen 80;
       server_name localhost;
-      root /usr/share/nginx/html;
-      index index.html;
-
-      # Enable CORS
+      
+      # Enable CORS for all locations
       add_header 'Access-Control-Allow-Origin' '*' always;
       add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE' always;
       add_header 'Access-Control-Allow-Headers' 'X-Requested-With,Accept,Content-Type, Origin' always;
+
+      root /usr/share/nginx/html;
+      index index.html;
 
       # Для Angular приложения
       location / {
@@ -34,19 +35,18 @@ data:
           proxy_set_header X-Real-IP $remote_addr;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
-          
-          # Для отладки
-          add_header X-Debug-Message "Proxying to backend" always;
       }
 
       # Для OPTIONS запросов
-      if ($request_method = 'OPTIONS') {
-          add_header 'Access-Control-Allow-Origin' '*';
-          add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
-          add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
-          add_header 'Access-Control-Max-Age' 1728000;
-          add_header 'Content-Type' 'text/plain; charset=utf-8';
-          add_header 'Content-Length' 0;
-          return 204;
+      location = /api/ {
+          if ($request_method = 'OPTIONS') {
+              add_header 'Access-Control-Allow-Origin' '*';
+              add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
+              add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+              add_header 'Access-Control-Max-Age' 1728000;
+              add_header 'Content-Type' 'text/plain; charset=utf-8';
+              add_header 'Content-Length' 0;
+              return 204;
+          }
       }
     } 
