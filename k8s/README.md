@@ -513,3 +513,40 @@ Frontend на http://localhost:8080
 Backend API на http://localhost:3000
 Настроен проброс портов
 Теперь приложение должно работать стабильно и безопасно. Если понадобятся какие-то изменения или возникнут вопросы - обращайтесь!
+
+### Доступ через Ingress
+
+1. Приложение доступно по адресам:
+   - Frontend: http://app.local
+   - Backend API: http://app.local/api
+   - Health Check: http://app.local/api/health
+
+2. Для работы необходимо добавить в /etc/hosts:
+   ```bash
+   127.0.0.1 app.local
+   ```
+
+3. Проверка статуса Ingress:
+   ```bash
+   # Проверка статуса контроллера
+   kubectl get pods -n ingress-nginx
+   
+   # Проверка логов контроллера
+   kubectl logs -n ingress-nginx -l app.kubernetes.io/component=controller
+   
+   # Проверка ingress ресурса
+   kubectl get ingress -n app-namespace
+   kubectl describe ingress app-ingress -n app-namespace
+   ```
+
+4. Если возникли проблемы:
+   ```bash
+   # Перезапуск контроллера
+   kubectl rollout restart deployment ingress-nginx-controller -n ingress-nginx
+   
+   # Проверка портов
+   sudo lsof -i :80
+   
+   # Ручной проброс портов
+   kubectl port-forward -n ingress-nginx service/ingress-nginx-controller 80:80
+   ```
